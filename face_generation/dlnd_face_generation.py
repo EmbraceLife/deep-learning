@@ -214,7 +214,7 @@ Generator
 - This function should be able to reuse the variabes in the neural network.  Use [`tf.variable_scope`](https://www.tensorflow.org/api_docs/python/tf/variable_scope) with a scope name of "generator" to allow the variables to be reused.
 
 - Return: the generated tensor (28 x 28 x `out_channel_dim`) images.
-# to know how to set it (28x28x...) need to watch dcgans 
+# to know how to set it (28x28x...) need to watch dcgans
 """
 
 
