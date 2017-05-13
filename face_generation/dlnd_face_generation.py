@@ -323,7 +323,7 @@ DON'T MODIFY ANYTHING IN THIS CELL THAT IS BELOW THIS LINE
 """
 tests.test_model_loss(model_loss)
 print("for test_model_loss")
-set_trace()
+
 
 
 
@@ -350,14 +350,25 @@ def model_opt(d_loss, g_loss, learning_rate, beta1):
     :return: A tuple of (discriminator training operation, generator training operation)
     """
     # TODO: Implement Function
+    # Get weights and bias to update
+    t_vars = tf.trainable_variables()
+    d_vars = [var for var in t_vars if var.name.startswith('discriminator')]
+    g_vars = [var for var in t_vars if var.name.startswith('generator')]
 
-    return None, None
+    # Optimize
+    d_train_opt = tf.train.AdamOptimizer(learning_rate, beta1=beta1).minimize(d_loss, var_list=d_vars)
+    g_train_opt = tf.train.AdamOptimizer(learning_rate, beta1=beta1).minimize(g_loss, var_list=g_vars)
+
+    return (d_train_opt, g_train_opt)
 
 
 """
 DON'T MODIFY ANYTHING IN THIS CELL THAT IS BELOW THIS LINE
 """
 tests.test_model_opt(model_opt, tf)
+print("for test_model_opt")
+set_trace()
+
 
 """
 Neural Network Training
