@@ -1,3 +1,9 @@
+################################
+# prepare examine tools
+from pdb import set_trace
+from pprint import pprint
+from inspect import getdoc, getmembers, getsourcelines, getmodule, getfullargspec, getargvalues
+
 from copy import deepcopy
 from unittest import mock
 import tensorflow as tf
@@ -147,5 +153,3 @@ def test_model_opt(model_opt, tf_module):
         d_train_opt, g_train_opt = model_opt(d_loss, g_loss, learning_rate, beta1)
         assert mock_trainable_variables.called,\
             'tf.mock_trainable_variables not called'
-
-

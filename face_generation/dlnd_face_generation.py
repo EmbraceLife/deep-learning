@@ -31,7 +31,7 @@ from matplotlib import pyplot
 
 mnist_images = helper.get_batch(glob(os.path.join(data_dir, 'mnist/*.jpg'))[:show_n_images], 28, 28, 'L')
 pyplot.imshow(helper.images_square_grid(mnist_images, 'L'), cmap='gray')
-pyplot.show()
+# pyplot.show()
 
 # ### CelebA
 # The [CelebFaces Attributes Dataset (CelebA)](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html) dataset contains over 200,000 celebrity images with annotations.  Since you're going to be generating faces, you won't need the annotations.  You can view the first number of examples by changing `show_n_images`.
@@ -45,7 +45,7 @@ Interesting and useful code: take images from folder and plot them
 """
 mnist_images = helper.get_batch(glob(os.path.join(data_dir, 'img_align_celeba/*.jpg'))[:show_n_images], 28, 28, 'RGB')
 pyplot.imshow(helper.images_square_grid(mnist_images, 'RGB'))
-pyplot.show()
+# pyplot.show()
 
 
 """
@@ -86,7 +86,7 @@ if not tf.test.gpu_device_name():
 else:
     print('Default GPU Device: {}'.format(tf.test.gpu_device_name()))
 
-set_trace()
+
 
 """
 ### Input
@@ -103,6 +103,7 @@ set_trace()
 
 import problem_unittests as tests
 
+
 def model_inputs(image_width, image_height, image_channels, z_dim):
     """
     Create the model inputs
@@ -113,10 +114,13 @@ def model_inputs(image_width, image_height, image_channels, z_dim):
     :return: Tuple of (tensor of real input images, tensor of z data, learning rate)
     """
     # TODO: Implement Function
-    inputs_real = tf.placeholder(tf.float32, (None, image_width, image_height, image_channels), name='input_real')
-    inputs_z = tf.placeholder(tf.float32, (None, z_dim), name='input_z')
 
-    return None, None, None
+
+    inputs_real = tf.placeholder(dtype=tf.float32, shape=(None, image_width, image_height, image_channels), name='input_real')
+    inputs_z = tf.placeholder(dtype=tf.float32, shape=(None, z_dim), name='input_z')
+    learing_rate = tf.placeholder(dtype=tf.float32, shape=(), name='lr')
+
+    return inputs_real, inputs_z, learing_rate
 
 
 """
@@ -327,7 +331,7 @@ def train(epoch_count, batch_size, z_dim, learning_rate, beta1, get_batches, dat
         for epoch_i in range(epoch_count):
             for batch_images in get_batches(batch_size):
                 # TODO: Train Model
-
+                pass
 
 
 """
