@@ -114,7 +114,7 @@ def test_generator(generator, tf_module):
 
         mock_variable_scope.reset_mock()
 		# The only way to make it work: according to test_discriminator, is to change False to True for the line Below
-        output = generator(z, out_channel_dim, True)
+        output = generator(z, out_channel_dim, False)
         _assert_tensor_shape(output, [None, 28, 28, out_channel_dim], 'Generator output (is_train=False)')
         assert mock_variable_scope.called, \
             'tf.variable_scope not called in Generator Inference(reuse=True)'

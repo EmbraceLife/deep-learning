@@ -218,7 +218,7 @@ Generator
 """
 
 
-def generator(z, out_channel_dim, reuse=False, is_train=True):
+def generator(z, out_channel_dim, is_train=True):
     """
     Create the generator network
 
@@ -246,7 +246,7 @@ def generator(z, out_channel_dim, reuse=False, is_train=True):
     #     return out
 
 	# use dcgan's generator directly
-    with tf.variable_scope('generator', reuse=reuse):
+    with tf.variable_scope('generator', reuse=not is_train):
         alpha = 0.01
         # First fully connected layer
         x1 = tf.layers.dense(z, 7*7*512)
