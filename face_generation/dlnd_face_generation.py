@@ -149,16 +149,32 @@ def discriminator(images, reuse=False):
     :return: Tuple of (tensor output of the discriminator, tensor logits of the discriminator)
 
     """
-    # TODO: Implement Function
 
-    return None, None
+    # TODO: Implement Function
+	# what kind of discriminator model is required here?
+	# No specific requirement at all, so just copy gan_mnist for now
+    with tf.variable_scope('discriminator', reuse=reuse):
+        # Hidden layer
+		# images will be flattened before operation by default and rank 2 tensor should be returned,but in reality, the original rank is returned. No idea why!!!
+		# How to avoid this problem? I am looking into dcgans example for help 
+        h1 = tf.layers.dense(inputs=images, units=128, activation=None)
+        # Leaky ReLU
+        alpha = 0.01
+        h1 = tf.maximum(alpha * h1, h1)
+
+		# both logits and out must have rank 2
+        logits = tf.layers.dense(h1, 1, activation=None)
+        out = tf.sigmoid(logits)
+
+
+    return (out, logits)
 
 
 """
 DON'T MODIFY ANYTHING IN THIS CELL THAT IS BELOW THIS LINE
 """
 tests.test_discriminator(discriminator, tf)
-
+set_trace()
 
 """
 Generator
