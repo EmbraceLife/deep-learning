@@ -127,7 +127,7 @@ def model_inputs(image_width, image_height, image_channels, z_dim):
 DON'T MODIFY ANYTHING IN THIS CELL THAT IS BELOW THIS LINE
 """
 tests.test_model_inputs(model_inputs)
-
+print("did for model_inputs ")
 
 
 """
@@ -152,18 +152,48 @@ def discriminator(images, reuse=False):
 
     # TODO: Implement Function
 	# what kind of discriminator model is required here?
-	# No specific requirement at all, so just copy gan_mnist for now
-    with tf.variable_scope('discriminator', reuse=reuse):
-        # Hidden layer
-		# images will be flattened before operation by default and rank 2 tensor should be returned,but in reality, the original rank is returned. No idea why!!!
-		# How to avoid this problem? I am looking into dcgans example for help 
-        h1 = tf.layers.dense(inputs=images, units=128, activation=None)
-        # Leaky ReLU
-        alpha = 0.01
-        h1 = tf.maximum(alpha * h1, h1)
+	# No specific requirement at all.
 
-		# both logits and out must have rank 2
-        logits = tf.layers.dense(h1, 1, activation=None)
+	# # borrow model structure from gan_mnist for now
+    # with tf.variable_scope('discriminator', reuse=reuse):
+    #     # Hidden layer
+    #     h1 = tf.layers.dense(images, 128, activation=None)
+	#
+    #     # Leaky ReLU
+    #     alpha = 0.01
+    #     h1 = tf.maximum(alpha * h1, h1)
+	#
+	# 	# flatten
+    #     shape_list = images.get_shape().as_list()
+    #     num_elements = shape_list[1]*shape_list[2]*shape_list[3]
+    #     flat = tf.reshape(h1, (-1, num_elements))
+	#
+	# 	# get logits and output
+    #     logits = tf.layers.dense(flat, 1, activation=None)
+    #     out = tf.sigmoid(logits)
+
+
+	# dlnd_face_generation discriminator is ready to use here
+    with tf.variable_scope('discriminator', reuse=reuse):
+        alpha = 0.01
+        # Input layer is 32x32x3
+        x1 = tf.layers.conv2d(images, 64, 5, strides=2, padding='same')
+        relu1 = tf.maximum(alpha * x1, x1)
+        # 16x16x32
+
+        x2 = tf.layers.conv2d(relu1, 128, 5, strides=2, padding='same')
+        bn2 = tf.layers.batch_normalization(x2, training=True)
+        relu2 = tf.maximum(alpha * bn2, bn2)
+        # 8x8x128
+
+        x3 = tf.layers.conv2d(relu2, 256, 5, strides=2, padding='same')
+        bn3 = tf.layers.batch_normalization(x3, training=True)
+        relu3 = tf.maximum(alpha * bn3, bn3)
+        # 4x4x256
+
+        # Flatten it
+        flat = tf.reshape(relu3, (-1, 4*4*256))
+        logits = tf.layers.dense(flat, 1)
         out = tf.sigmoid(logits)
 
 
@@ -174,7 +204,8 @@ def discriminator(images, reuse=False):
 DON'T MODIFY ANYTHING IN THIS CELL THAT IS BELOW THIS LINE
 """
 tests.test_discriminator(discriminator, tf)
-set_trace()
+print("did for discriminator ")
+
 
 """
 Generator
@@ -183,6 +214,7 @@ Generator
 - This function should be able to reuse the variabes in the neural network.  Use [`tf.variable_scope`](https://www.tensorflow.org/api_docs/python/tf/variable_scope) with a scope name of "generator" to allow the variables to be reused.
 
 - Return: the generated tensor (28 x 28 x `out_channel_dim`) images.
+# to know how to set it (28x28x...) need to watch dcgans 
 """
 
 
@@ -200,13 +232,54 @@ def generator(z, out_channel_dim, is_train=True):
     """
     # TODO: Implement Function
 
-    return None
+    # with tf.variable_scope('generator', reuse=False):
+    #     alpha = 0.01
+    #     # Hidden layer
+    #     h1 = tf.layers.dense(z, 128, activation=None)
+    #     # Leaky ReLU
+    #     h1 = tf.maximum(alpha * h1, h1)
+	#
+    #     # Logits and tanh output
+    #     logits = tf.layers.dense(h1, out_channel_dim, activation=None)
+    #     out = tf.tanh(logits)
+	#
+    #     return out
+
+	# use dcgan's generator directly
+    with tf.variable_scope('generator', reuse=False):
+        alpha = 0.01
+        # First fully connected layer
+        x1 = tf.layers.dense(z, 4*4*512)
+        # Reshape it to start the convolutional stack
+        x1 = tf.reshape(x1, (-1, 4, 4, 512))
+        x1 = tf.layers.batch_normalization(x1, training=is_train)
+        x1 = tf.maximum(alpha * x1, x1)
+        # 4x4x512 now
+
+        x2 = tf.layers.conv2d_transpose(x1, 256, 5, strides=2, padding='same')
+        x2 = tf.layers.batch_normalization(x2, training=is_train)
+        x2 = tf.maximum(alpha * x2, x2)
+        # 8x8x256 now
+
+        x3 = tf.layers.conv2d_transpose(x2, 128, 5, strides=2, padding='same')
+        x3 = tf.layers.batch_normalization(x3, training=is_train)
+        x3 = tf.maximum(alpha * x3, x3)
+        # 16x16x128 now
+
+        # Output layer
+        logits = tf.layers.conv2d_transpose(x3, out_channel_dim, 5, strides=2, padding='same')
+        # 32x32x3 now
+
+        out = tf.tanh(logits)
+        return out
 
 
 """
 DON'T MODIFY ANYTHING IN THIS CELL THAT IS BELOW THIS LINE
 """
 tests.test_generator(generator, tf)
+print("did for generator ")
+set_trace()
 
 """
 # ### Loss

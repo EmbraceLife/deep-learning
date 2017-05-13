@@ -78,7 +78,8 @@ def test_model_inputs(model_inputs):
 def test_discriminator(discriminator, tf_module):
     with TmpMock(tf_module, 'variable_scope') as mock_variable_scope:
         image = tf.placeholder(tf.float32, [None, 28, 28, 3])
-        set_trace()
+
+
         output, logits = discriminator(image)
         _assert_tensor_shape(output, [None, 1], 'Discriminator Training(reuse=false) output')
         _assert_tensor_shape(logits, [None, 1], 'Discriminator Training(reuse=false) Logits')
