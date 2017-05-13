@@ -78,7 +78,7 @@ def test_model_inputs(model_inputs):
 def test_discriminator(discriminator, tf_module):
     with TmpMock(tf_module, 'variable_scope') as mock_variable_scope:
         image = tf.placeholder(tf.float32, [None, 28, 28, 3])
-
+        set_trace()
 
         output, logits = discriminator(image)
         _assert_tensor_shape(output, [None, 1], 'Discriminator Training(reuse=false) output')
@@ -104,7 +104,7 @@ def test_generator(generator, tf_module):
     with TmpMock(tf_module, 'variable_scope') as mock_variable_scope:
         z = tf.placeholder(tf.float32, [None, 100])
         out_channel_dim = 5
-
+        # set_trace()
         output = generator(z, out_channel_dim)
         _assert_tensor_shape(output, [None, 28, 28, out_channel_dim], 'Generator output (is_train=True)')
         assert mock_variable_scope.called, \
