@@ -279,7 +279,7 @@ DON'T MODIFY ANYTHING IN THIS CELL THAT IS BELOW THIS LINE
 """
 tests.test_generator(generator, tf)
 print("did for generator ")
-set_trace()
+
 
 """
 # ### Loss
@@ -302,14 +302,30 @@ def model_loss(input_real, input_z, out_channel_dim):
     :return: A tuple of (discriminator loss, generator loss)
     """
     # TODO: Implement Function
+    g_model = generator(input_z, out_channel_dim)
+    d_model_real, d_logits_real = discriminator(input_real)
+    d_model_fake, d_logits_fake = discriminator(g_model, reuse=True)
 
-    return None, None
+    d_loss_real = tf.reduce_mean(
+        tf.nn.sigmoid_cross_entropy_with_logits(logits=d_logits_real, labels=tf.ones_like(d_model_real)))
+    d_loss_fake = tf.reduce_mean(
+        tf.nn.sigmoid_cross_entropy_with_logits(logits=d_logits_fake, labels=tf.zeros_like(d_model_fake)))
+    g_loss = tf.reduce_mean(
+        tf.nn.sigmoid_cross_entropy_with_logits(logits=d_logits_fake, labels=tf.ones_like(d_model_fake)))
+
+    d_loss = d_loss_real + d_loss_fake
+
+    return d_loss, g_loss
 
 
 """
 DON'T MODIFY ANYTHING IN THIS CELL THAT IS BELOW THIS LINE
 """
 tests.test_model_loss(model_loss)
+print("for test_model_loss")
+set_trace()
+
+
 
 """
 ### Optimization
